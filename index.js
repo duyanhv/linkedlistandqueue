@@ -53,24 +53,6 @@ function divArray(a, b) {
     return c;
 }
 
-// // First Use Case.
-// var a = [1, 2, 3, 4];
-// var b = [1, 2, 3, 4];
-// console.log( sumArray(a, b) );
-
-// // Second Use Case with different Length.
-// var a = [1, 2, 3, 4];
-// var b = [1, 2, 3, 4, 5];
-// console.log( sumArray(a, b) );
-
-// // Third Use Case with undefined values and invalid length.
-// var a = [1, 2, 3, 4];
-// var b = [];
-// b[1] = 2;
-// b[3] = 4;
-// b[9] = 9;
-// console.log( sumArray(a, b) );
-
 let initJson = () => {
     if (!fs.exists('test.json')) {
         fs.writeFileSync('test.json', '[{"id":0,"number1":[],"number2":[]}]');
@@ -116,9 +98,6 @@ let genArrays = () => {
 
     //=========================================
 
-    // initJson();
-    // pushJson(a,b);
-
     return {
         a, b
     };
@@ -134,18 +113,17 @@ let listDemo = (a, b) => {
     let list2 = new List();
 
 
-
     for (let i = 0; i < a.length; i++) {
         list1.push(a[i]);
     }
-
 
 
     for (let j = 0; j < b.length; j++) {
         list2.push(b[j]);
     }
 
-
+    // initJson();
+    // pushJson(list1.asArray(), list2.asArray());
 
     // list1.each(function (g, node1) {
     //     console.log('list1: ' + g + ': ' + node1.value());
@@ -212,9 +190,24 @@ app.get('/random', (req, res) => {
 
 const util = require('util');
 
+
 app.get('/addList', (req, res) => {
-    let list = listDemo(newArrays.a, newArrays.b);
+    let list;
+    // if(newArrays.a){
+    //     list = listDemo(newArrays.a, newArrays.b);
+    // }else{
+
+    // }
     // res.send(JSON.stringify(util.inspect(list)));
+    
+    console.log(list);
+    console.log(req.body);
+});
+
+app.post('/api/hjx', (req, res) => {
+    let numArr = getNumFromInput(req.body.num1, req.body.num2);
+    let list;
+    list = listDemo(numArr.num1Arr, numArr.num2Arr);
     console.log(list);
 });
 
@@ -222,6 +215,34 @@ app.get('/addQueue', (req, res) => {
     let queue = queueDemo(newArrays.a, newArrays.b);
     // console.log(queue);
     console.log(queue);
+});
+
+let getNumFromInput = (num1, num2) => {
+    num1 = num1.toString();
+    num2 = num2.toString();
+    
+    let num1Arr = num1.split(',');
+    let num2Arr = num2.split(',');
+
+    for (let i = 0; i < num1Arr.length; i++) {
+        num1Arr[i] = parseInt(num1Arr[i]);
+    }
+
+    for (let i = 0; i < num2Arr.length; i++) {
+        num2Arr[i] = parseInt(num2Arr[i]);
+    }
+
+    return {
+        num1Arr, num2Arr
+    }
+}
+
+app.post('/input', (req, res) => {
+    let numArr = getNumFromInput(req.body.num1, req.body.num2);
+    res.render('genrand', {
+        a: numArr.num1Arr,
+        b: numArr.num2Arr
+    });
 });
 
 
