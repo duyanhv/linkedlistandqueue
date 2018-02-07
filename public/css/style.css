@@ -1,0 +1,23 @@
+*{margin: 0; padding: 0;}
+
+.wrapper{
+    display: inline-block;
+}
+
+.divA{
+    height: 100px;
+    width: 200px;
+    border: 1px solid red;
+    position: relative;
+    float: left;
+}
+
+.divB{
+    height: 100px;
+    width: 200px;
+    border: 1px solid blue;
+    position: relative;
+    float: left;
+}
+
+
