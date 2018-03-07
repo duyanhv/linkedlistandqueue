@@ -23,6 +23,7 @@
     float: left;
 }
 
+
 .divC{
     height:33%;
     display: flex;
@@ -38,4 +39,15 @@ form{
     margin: 10px 0 0 40px;
 }
 
+.divCal{
+    text-align: center;
+    margin-top: 10px;
+}
 
+.divCal button{
+    width: 10%;
+}
+
+.divCal input{
+    width: 10%;
+}

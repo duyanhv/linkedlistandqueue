@@ -1,143 +1,49 @@
 const express = require('express');
 const handlebars = require('express-handlebars');
 const bodyparser = require('body-parser');
-const mongoose = require('mongoose');
 let app = express();
-const fs = require('fs');
-const List = require('linkedlist-js').List;
+const List = require('./duyanh_linkedlist').List;
 const Queue = require('queue-fifo');
 
 const config = require('./config');
+const tools = require('./config/tools');
+const calculate = require('./config/calculate');
+const fileController = require('./config/fileController');
 
 app.use(bodyparser.urlencoded({ extended: true }));
 app.engine("handlebars", handlebars({ defaultLayout: 'index' }));
 app.set("view engine", "handlebars");
 
 
-let randomInt = (min, max) => {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    var rand = Math.floor(Math.random() * (max - min)) + min;
-    return rand;
-}
-
-const sumArray = (a, b) => {
-    var c = [];
-    for (var i = 0; i < Math.max(a.length, b.length); i++) {
-        c.push((a[i] || 0) + (b[i] || 0));
-    }
-    return c;
-}
-
-const mulArray = (a, b) => {
-    var c = [];
-    for (var i = 0; i < Math.max(a.length, b.length); i++) {
-        c.push((a[i] || 0) * (b[i] || 0));
-    }
-    return c;
-}
-
-function subArray(a, b) {
-    var c = [];
-    for (var i = 0; i < Math.max(a.length, b.length); i++) {
-        c.push((a[i] || 0) - (b[i] || 0));
-    }
-    return c;
-}
-
-function divArray(a, b) {
-    var c = [];
-    for (var i = 0; i < Math.max(a.length, b.length); i++) {
-        c.push(Math.floor((a[i] || 0) / (b[i] || 0)));
-    }
-    return c;
-}
-
-let initJson = () => {
-    if (!fs.exists('test.json')) {
-        fs.writeFileSync('test.json', '[{"id":0,"number1":[],"number2":[]}]');
-        console.log("chay vao initJson");
-
-    } else {
-        console.log("file exixsted");
-    }
-}
-
-let pushJson = (a, b) => {
-    var testJson = require('./test.json');
-
-    var jsonStr = testJson;
-
-    var newValues = { "id": testJson.length, "number1": a, "number2": b };
-
-    jsonStr.push(newValues);
-    fs.writeFile('test.json', JSON.stringify(jsonStr), (err, res) => {
-        if (err) console.error(err);
-        console.log('Create JSon Success');
-    });
-}
-
-
-let genArrays = () => {
-    let a = [];
-    let b = [];
-    let total = randomInt(1, 6);
-
-    for (let i = 0; i < total; i++) {
-        let j = randomInt(0, 1000);
-        a.push(j);
-    }
-
-
-    let total2 = randomInt(1, 6);
-    for (let k = 0; k < total2; k++) {
-        let f = randomInt(0, 1000);
-        b.push(f);
-    }
-
-
-    //=========================================
-
-    return {
-        a, b
-    };
-
-}
-
 // DEMO LIST:
 let listDemo = (a, b) => {
-    // let newGen = genArrays();
-    // let a = newGen.a;
-    // let b = newGen.b;
     let list1 = new List();
     let list2 = new List();
-
 
     for (let i = 0; i < a.length; i++) {
         list1.push(a[i]);
     }
 
-
     for (let j = 0; j < b.length; j++) {
         list2.push(b[j]);
     }
 
-    // initJson();
-    // pushJson(list1.asArray(), list2.asArray());
-
-    // list1.each(function (g, node1) {
-    //     console.log('list1: ' + g + ': ' + node1.value());
+    // a.forEach((val) =>{
+    //     list1.push(val);
     // });
 
-    // list2.each(function (h, node2) {
-    //     console.log('list2: ' + h + ': ' + node2.value());
+    // b.forEach((val) =>{
+    //     list2.push(val);
     // });
 
-    let c = [];
-    c = sumArray(list1.asArray(), list2.asArray());
+    console.log(`List1: ${list1.asArray()}`);
+    console.log(`List2: ${list2.asArray()}`);
+    //========================================================
+    fileController.initJson();
+    fileController.pushJson(list1.asArray(), list2.asArray());
 
     return {
-        list1, list2, c
+        list1, list2
     }
 }
 
@@ -152,22 +58,19 @@ let queueDemo = (a, b) => {
     for (let j = 0; j < b.length; j++) {
         queue2.enqueue(b[j]);
     }
+    console.log(queue1);
+    console.log(queue2);
 
-    let c = [];
-    c = sumArray(convertToArray(queue1), convertToArray(queue2));
+    let queue1Array = tools.convertToArray(queue1);
+    let queue2Array = tools.convertToArray(queue2);
+    console.log(`Queue1: ${queue1Array}`);
+    console.log(`Queue2: ${queue2Array}`);
+    fileController.initJson();
+    fileController.pushJson(queue1Array, queue2Array);
 
     return {
-        queue1, queue2, c
+        queue1, queue2
     };
-}
-
-let convertToArray = (queue) => {
-    let arr = [];
-    while (!queue.isEmpty()) {
-        arr.push(queue.peek());
-        queue.dequeue();
-    }
-    return arr;
 }
 
 
@@ -179,9 +82,9 @@ app.get('/', (req, res) => {
 var newArrays;
 
 app.get('/random', (req, res) => {
-    let tStart = process.hrtime();
-    newArrays = genArrays();
-    let tEnd = process.hrtime(tStart);
+
+    newArrays = tools.genArrays();
+
     res.render('genrand', {
         a: newArrays.a,
         b: newArrays.b
@@ -191,59 +94,68 @@ app.get('/random', (req, res) => {
 const util = require('util');
 
 
-app.get('/addList', (req, res) => {
+app.post('/api/addList', (req, res) => {
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
     let list;
-    // if(newArrays.a){
-    //     list = listDemo(newArrays.a, newArrays.b);
-    // }else{
-
-    // }
-    // res.send(JSON.stringify(util.inspect(list)));
-    
-    console.log(list);
-    console.log(req.body);
-});
-
-app.post('/api/hjx', (req, res) => {
-    let numArr = getNumFromInput(req.body.num1, req.body.num2);
-    let list;
+    let tStart = process.hrtime();
     list = listDemo(numArr.num1Arr, numArr.num2Arr);
+    let tEnd = process.hrtime(tStart);
     console.log(list);
+    console.log(`Double Linked List: ${tEnd} seconds`);
 });
 
-app.get('/addQueue', (req, res) => {
-    let queue = queueDemo(newArrays.a, newArrays.b);
-    // console.log(queue);
-    console.log(queue);
+
+app.post('/api/addQueue', (req, res) =>{
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
+    let queue;
+    let tStart = process.hrtime();
+    queue = queueDemo(numArr.num1Arr, numArr.num2Arr);
+    let tEnd = process.hrtime(tStart);
+    console.log(`Queue: ${tEnd} seconds`);
 });
 
-let getNumFromInput = (num1, num2) => {
-    num1 = num1.toString();
-    num2 = num2.toString();
-    
-    let num1Arr = num1.split(',');
-    let num2Arr = num2.split(',');
 
-    for (let i = 0; i < num1Arr.length; i++) {
-        num1Arr[i] = parseInt(num1Arr[i]);
-    }
-
-    for (let i = 0; i < num2Arr.length; i++) {
-        num2Arr[i] = parseInt(num2Arr[i]);
-    }
-
-    return {
-        num1Arr, num2Arr
-    }
-}
 
 app.post('/input', (req, res) => {
-    let numArr = getNumFromInput(req.body.num1, req.body.num2);
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
     res.render('genrand', {
         a: numArr.num1Arr,
         b: numArr.num2Arr
     });
 });
+
+app.post('/api/sum', (req, res) =>{
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
+    let c = [];
+    let tStart = process.hrtime();
+    c = calculate.sumArray(numArr.num1Arr, numArr.num2Arr);
+    let tEnd = process.hrtime(tStart);
+    console.log(`Sum: ${tEnd} seconds`);
+    res.send(c);
+});
+
+app.post('/api/sub', (req, res) =>{
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
+    let c = [];
+    c = calculate.subArray(numArr.num1Arr, numArr.num2Arr);
+    res.send(c);
+});
+
+app.post('/api/mul', (req, res) =>{
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
+    let c = [];
+    c = calculate.mulArray(numArr.num1Arr, numArr.num2Arr);
+    res.send(c);
+});
+
+app.post('/api/div', (req, res) =>{
+    let numArr = tools.getNumFromInput(req.body.num1, req.body.num2);
+    let c = [];
+    c = calculate.divArray(numArr.num1Arr, numArr.num2Arr);
+    res.send(c);
+});
+
+
 
 
 app.use(express.static('public'));
