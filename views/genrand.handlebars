@@ -1,32 +1,40 @@
 <div class="wrapper">
-    <div class="divC divA">
-        {{!-- <p id="randA">{{a}}</p> --}}
-        <input type="text" name="num1" value="{{a}}">
-    </div>
-    <div class="divC divB">
-        {{!-- <p id="randB">{{b}}</p> --}}
-        <input type="text" name="num2" value="{{b}}">
+    <div class="square1">
+        {{!--
+        <div class="divC divA"> --}} {{!--
+            <p id="randA">{{a}}</p> --}}
+
+            <div>
+                <h2>Number 1</h2>
+                <h2>Number 2</h2>
+            </div>
+            <input class="" type="text" name="num1" value="{{a}}"> {{!-- </div> --}} {{!--
+        <div class="divC divB"> --}} {{!--
+            <p id="randB">{{b}}</p> --}}
+            <input class="" type="text" name="num2" value="{{b}}"> {{!-- </div> --}}
     </div>
     <div class="btnDiv">
-        <button id="randMethod">
+        <button class="btn btn-success" id="randMethod">
             <a href="/random">Rand Number</a>
         </button>
-        <button id="btnAddList">
+        <button class="btn btn-success" id="btnAddList">
             <a href="/addList">Add to Linklist</a>
         </button>
-        <button id="btnAddQueue">
+        <button class="btn btn-success" id="btnAddQueue">
             <a href="/addQueue">Add to Queue</a>
         </button>
     </div>
     <form method="POST" action="/input">
-        <input type="text" name="num1" placeholder="Enter num1 here">
-        <input type="text" name="num2" placeholder="Enter num2 here">
-        <input type="submit" value="Send">
+        <input class="inputForm" type="text" name="num1" placeholder="Enter num1 here">
+        <input class="inputForm" type="text" name="num2" placeholder="Enter num2 here">
+        <input class="btn btn-success" type="submit" value="Send">
     </form>
     <div class="divCal">
         <input type="text" name="operator" placeholder="+,-,*,/">
         <input id="calCu" type="submit" value="Cal">
     </div>
-    <p id="result"></p>
+    <div class="divCode">
+        <code id="result"></code>
+    </div>
 
 </div>

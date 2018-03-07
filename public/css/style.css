@@ -7,7 +7,28 @@
     transform: translate(-50%, 100%);
 }
 
-.divA{
+.square1{
+    width: 600px;
+    height: 30px;
+    display: inline;
+}
+
+.square1 div h2{
+    display:inline-block;
+    margin: 10px 150px 10px 0px;
+}
+
+.square1 div{
+    margin-left: 90px;
+}
+
+.square1 input{
+    width: 300px;
+    height: 34px;
+    border-radius: 4px;
+}
+
+/* .divA{
     height: 100px;
     width: 200px;
     border: 1px solid red;
@@ -21,22 +42,29 @@
     border: 1px solid blue;
     position: relative;
     float: left;
-}
+} */
 
 
-.divC{
+/* .divC{
     height:33%;
     display: flex;
     justify-content: center;
     align-items:center;
-}
+} */
 
 .btnDiv{
-    transform: translate(14%, 3%);
+    transform: translate(20%, 35%);
 }
 
 form{
-    margin: 10px 0 0 40px;
+    margin: 30px 0 0 20%;
+}
+
+form .inputForm{
+    width: 150px;
+    height: 34px;
+    border-radius: 4px;
+    
 }
 
 .divCal{
@@ -50,4 +78,15 @@ form{
 
 .divCal input{
     width: 10%;
+}
+
+a{
+    text-decoration: none;
+    color: #FFFFFF;
+}
+div.divCode{
+    text-align: center;
+}
+#result{
+    font-size: 140%;
 }
